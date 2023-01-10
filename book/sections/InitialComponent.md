@@ -38,8 +38,8 @@ Even the network traffic is eavesdropped, the attacker can't decrypt
 the content. So, it's secure, right? According to the study[^1],
 average password entropy is 40 bits. Suppose, a CPU can test one million
 decryption in a second. With 40 bits key, the key space is 
-$2^40 = 1099511627776$, one million is about $2^20$, so the brute force
-can be done in $2^40/2^20=1048576$ seconds, which is about 12 days.
+$2^{40} = 1099511627776$, one million is about $2^{20}$, so the brute force
+can be done in $2^{40}/2^{20}=1048576$ seconds, which is about 12 days.
 
 12 days is not long enough to feel safe. This means, in case of 
 data breach, the secure content itself needs to encrypted by a different

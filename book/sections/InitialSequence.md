@@ -61,6 +61,8 @@ alt Retrieval by content ID
   Client ->>+ SSS: Request for all content IDs
   SSS ->> Storage: Get all content IDs
   SSS ->>+ KMS: Request to encrypt the content IDs
+  KMS ->> KMS: Decrypt with CEK
+  KMS ->> KMS: Encrypt with transport key
   KMS ->>- SSS: Encrypted list of content IDs
   SSS ->>- Client: Encrypted list of content IDs
   opt Content retrieval
@@ -68,6 +70,8 @@ alt Retrieval by content ID
     Client ->>+ SSS: Request a content with one of the IDs
     SSS ->> Storage: Retrieve content of the given ID
     SSS ->>+ KMS: Request to encrypt the content
+    KMS ->> KMS: Decrypt with CEK
+    KMS ->> KMS: Encrypt with transport key
     KMS ->>- SSS: Encrypted content
     SSS ->>- Client: Encrypted content
   end
@@ -75,8 +79,15 @@ else Retrieval of all contents
   Client ->>+ SSS: Request for all contents
   SSS ->> Storage: Retrieve all contents
   SSS ->>+ KMS: Request to encrypt the contents
+  KMS ->> KMS: Decrypt with CEK
+  KMS ->> KMS: Encrypt with transport key
   KMS ->>- SSS: Encrypted contents
   SSS ->>- Client: Encrypted contents
 end
 Client ->> Client: Decrypt the returned content(s)
 ```
+
+As the storing sequence, stored secure contents are encrypted
+by [SSS](./glossary.md#sss)'s [CEK](./glossary.md#cek), so 
+[KMS](./glossary.md#kms) must decrypt with it then encrypt 
+with the transport key.

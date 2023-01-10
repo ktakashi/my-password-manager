@@ -8,4 +8,7 @@ Table of contents
 -----------------
 
 1. [Introduction](./sections/Introduction.md)
-2. [Initial components](./sections/InitialComponent.md)
+2. [Initial Components](./sections/InitialComponent.md)
+3. [Initial Sequence](./sections/InitialSequence.md)
+- [Glossary](./sections/glossary.md)
+

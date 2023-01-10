@@ -37,3 +37,5 @@ I am trying to write things right as much as possible. I am not a
 security specialist but mere a software developer interested in
 cryptography and security. This book may contain uncommon practices
 or overlooked vulnerabilities. Using this book is at your own risk.
+
+Next: [Initial Component](./InitialComponent.md)

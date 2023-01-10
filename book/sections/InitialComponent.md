@@ -28,6 +28,8 @@ System_Boundary(b0, "Password Manager") {
 Rel(client, idp, "Authenticate", "https")
 Rel(client, sss, "Secure Content", "https")
 BiRel(sss, storage, "Store")
+
+UpdateRelStyle(sss, storage, $lineColor="red")
 ```
 
 The client derives [CEK](./glossary.md#CEK) from the master password
@@ -80,6 +82,10 @@ Rel(client, kms, "Get transport key", "https")
 Rel(client, sss, "Secure Content", "https")
 Rel(sss, kms, "Get CEK", "https")
 BiRel(sss, storage, "Store", "Encrypt encrypted content with CEK")
+
+UpdateRelStyle(sss, storage, $lineColor="red")
 ```
 
 [^1]: [A Large-Scale Study of Web Password Habits](https://rist.tech.cornell.edu/6431papers/FlorencioHerley2007.pdf)
+
+Next: [Initial Sequence](./InitialSequence.md)

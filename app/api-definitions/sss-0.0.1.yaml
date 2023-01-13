@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: Secure Storage Service - API
+  version: 0.0.1
+  description: |-
+    Secure Storage Service APIs
+paths:
+  /{pseudonym}/contents:
+    get:
+      summary: Retrieve all contents of the user associated to {pseudonym}
+      parameters:
+        - $ref: '#/components/parameters/Pseudonym'
+        - $ref: '#/components/parameters/Fields'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentList'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      summary: Create secure content of the user associated to {pseudonym}
+      requestBody:
+        $ref: '#/components/requestBodies/ContentRequest'
+      responses:
+        '201':
+          description: Successful response
+          headers:
+            Location:
+              description: Location of the created resource
+              schema:
+                type: string
+
+  /{pseudonym}/contents/{content-id}:
+    get:
+      summary: Get a content whose ID is {content-id}
+      parameters:
+        - name: content-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+        '404':
+          description: Content of ID {content-id} not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      summary: Update a content whose ID is {content-id}
+      parameters:
+        - name: content-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/ContentRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+        '404':
+          description: Content of ID {content-id} not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+components:
+  parameters:
+    Pseudonym:
+      name: pseudonym
+      description: Pseudonym of a user
+      required: true
+      in: path
+      schema:
+        type: string
+    Fields:
+      name: fields
+      description: A comma separated list of content fields, e.g. id
+      required: false
+      in: query
+      schema:
+        type: string
+  requestBodies:
+    ContentRequest:
+      description: Secure content
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Content'
+  responses:
+    ErrorResponse:
+      description: Any error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    ContentList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Content'
+    Content:
+      type: string
+      format: base64
+    ContentId:
+      type: string
+    Error:
+      type: object
+      description: RFC 7807 error object
+      properties:
+        type:
+          schema:
+            type: string
+        title:
+          schema:
+            type: string
+        status:
+          schema:
+            type: integer
+        detail:
+          schema:
+            type: string

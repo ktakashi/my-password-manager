@@ -91,3 +91,5 @@ As the storing sequence, stored secure contents are encrypted
 by [SSS](./glossary.md#sss)'s [CEK](./glossary.md#cek), so 
 [KMS](./glossary.md#kms) must decrypt with it then encrypt 
 with the transport key.
+
+Next: [Initial APIs](./InitialApis.md)

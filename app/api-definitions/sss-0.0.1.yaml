@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Secure Storage Service - API
   version: 0.0.1
@@ -18,6 +18,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ContentList'
+              examples:
+                list:
+                  summary: A list of contents
         '500':
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -29,6 +32,7 @@ paths:
           description: Successful response
           headers:
             Location:
+              required: true
               description: Location of the created resource
               schema:
                 type: string
@@ -44,17 +48,9 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Content'
+          $ref: '#/components/responses/SuccessfulContentResponse'
         '404':
-          description: Content of ID {content-id} not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/404ErrorResponse'
         '500':
           $ref: '#/components/responses/ErrorResponse'
     put:
@@ -69,17 +65,9 @@ paths:
         $ref: '#/components/requestBodies/ContentRequest'
       responses:
         '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Content'
+          $ref: '#/components/responses/SuccessfulContentResponse'
         '404':
-          description: Content of ID {content-id} not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/404ErrorResponse'
         '500':
           $ref: '#/components/responses/ErrorResponse'
 components:
@@ -89,6 +77,7 @@ components:
       description: Pseudonym of a user
       required: true
       in: path
+      style: simple
       schema:
         type: string
     Fields:
@@ -96,6 +85,7 @@ components:
       description: A comma separated list of content fields, e.g. id
       required: false
       in: query
+      style: simple
       schema:
         type: string
   requestBodies:
@@ -104,37 +94,73 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Content'
+            $ref: '#/components/schemas/ContentRequest'
   responses:
+    SuccessfulContentResponse:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Content'
+    404ErrorResponse:
+      description: Content of ID {content-id} not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            404:
+              summary: 404 error example
     ErrorResponse:
       description: Any error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          examples:
+            error:
+              summary: Any error example
   schemas:
     ContentList:
-      type: array
+      type:
+        - array
       items:
         $ref: '#/components/schemas/Content'
+    ContentRequest:
+      type:
+        - object
+      required:
+        - keyId
+        - content
+      properties:
+        keyId:
+          type:
+            - string
+          description: Client encryption key ID provided by KMS
+        content:
+          $ref: '#/components/schemas/Content'
     Content:
-      type: string
-      format: base64
+      description: Encrypted content
+      type:
+       - string
+      contentEncoding: base64
     ContentId:
-      type: string
+      type:
+        - string
     Error:
-      type: object
+      type:
+        - object
       description: RFC 7807 error object
       properties:
         type:
-          schema:
-            type: string
+          type:
+            - string
         title:
-          schema:
-            type: string
+          type:
+            - string
         status:
-          schema:
-            type: integer
+          type:
+            - integer
         detail:
-          schema:
-            type: string
+          type:
+            - string

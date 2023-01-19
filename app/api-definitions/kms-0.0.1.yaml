@@ -1,0 +1,89 @@
+openapi: 3.1.0
+info:
+  title: Key Management System - API
+  version: 0.0.1
+  description: |-
+    Key Management System APIs
+paths:
+  /keys/exchange:
+    post:
+      summary: Ephemeral secret key exchange
+      requestBody:
+        description: Key exchange request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KeyExchangeRequest"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyExchangeResponse"
+  /recrypt:
+    post:
+      summary: Decrypt then Encrypt request
+      parameters:
+        - $ref: "#/components/parameters/Pseudonym"
+      requestBody:
+        description: Recrypt request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecryptRequest"
+      responses:
+        200:
+          description: Successful response
+          content:
+            application:json:
+              schema:
+                $ref: "#/components/schemas/EncryptedContent"
+
+components:
+  schemas:
+    KeyExchangeRequest:
+      type:
+        - object
+      required:
+        - publicKey
+        - keyLength
+      properties:
+        publicKey:
+          $ref: "#/components/schemas/PublicKey"
+        keyLength:
+          type:
+            - integer
+    KeyExchangeResponse:
+      type:
+        - object
+      required:
+        - keyId
+        - publicKey
+      properties:
+        keyId:
+          type:
+            - string
+        publicKey:
+          $ref: "#/components/schemas/PublicKey"
+    RecryptRequest:
+      type:
+        - object
+      properties:
+        decryptionKeyId:
+          $ref: "#/components/schemas/KeyId"
+        encryptionKeyId:
+          $ref: "#/components/schemas/KeyId"
+        content:
+          $ref: "#/components/schemas/EncryptedContent"
+    PublicKey:
+      type:
+        - string
+      contentEncoding: bas64
+    EncryptedContent:
+      type:
+        - string
+      contentEncoding: bas64
+    KeyId:
+      type:
+        - string

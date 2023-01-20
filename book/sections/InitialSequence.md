@@ -8,8 +8,11 @@ user needs to get a transport key. A transport key is a secret
 key which needs to be shared by both the application and the user.
 Then the user can send their secure contents, which is first
 encrypted by a key derived from the master password then encrypted
-by the transport key, to [SSS](./glossary.md#sss). Now, the sequence
-of storing secure contents should look like this:
+by the transport key, to [SSS](./glossary.md#sss). When
+[SSS](./glossary.md#sss) received the request, then it sends the
+request to [KMS](./glossary.md#kms) to re-encrypt the content
+with its [CEK](./glossary.md#cek). Now, the sequence of storing 
+secure contents should look like this:
 
 ```mermaid
 sequenceDiagram

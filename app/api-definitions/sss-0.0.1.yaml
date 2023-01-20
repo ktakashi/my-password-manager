@@ -4,6 +4,8 @@ info:
   version: 0.0.1
   description: |-
     Secure Storage Service APIs
+servers: 
+  - url: http://localhost 
 paths:
   /{pseudonym}/contents:
     get:
@@ -18,13 +20,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ContentList'
-              examples:
-                list:
-                  summary: A list of contents
         '500':
           $ref: '#/components/responses/ErrorResponse'
     post:
       summary: Create secure content of the user associated to {pseudonym}
+      parameters: 
+        - $ref: "#/components/parameters/Pseudonym"
       requestBody:
         $ref: '#/components/requestBodies/ContentRequest'
       responses:
@@ -41,11 +42,8 @@ paths:
     get:
       summary: Get a content whose ID is {content-id}
       parameters:
-        - name: content-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/Pseudonym"
+        - $ref: "#/components/parameters/ContentId"
       responses:
         '200':
           $ref: '#/components/responses/SuccessfulContentResponse'
@@ -56,11 +54,8 @@ paths:
     put:
       summary: Update a content whose ID is {content-id}
       parameters:
-        - name: content-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/Pseudonym"
+        - $ref: "#/components/parameters/ContentId"
       requestBody:
         $ref: '#/components/requestBodies/ContentRequest'
       responses:
@@ -88,6 +83,14 @@ components:
       style: simple
       schema:
         type: string
+    ContentId:
+      name: content-id
+      deprecated: Content ID
+      required: true
+      in: path
+      style: simple
+      schema: 
+        $ref: "#/components/schemas/ContentId"
   requestBodies:
     ContentRequest:
       description: Secure content

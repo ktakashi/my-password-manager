@@ -35,3 +35,23 @@ value, possibly a short period of time or per session. For the initial
 setup, we keep `{pseudonym}` just randomly allocated aliases. We will
 revisit this topic in later section.
 
+So, we decided the [SSS](./glossary.md#sss)'s APIs. Let's make 
+[KMS](./glossary.md#kms)'s APIs as well. What we need at this stage
+is that key exchange and the endpoint called by [SSS](./glossary.md#sss),
+which does decryption then encryption. Let's call the latter case
+_recrypt_[^1]. The key exchange endpoint should not transport the
+exchanged key itself, to do so, we can use key-agreement protocol.
+We use Diffie–Hellman for our application. This means, a requestor
+must send its public key, possibly ephemeral one, and receive a
+public of the [KMS](./glossary.md#kms), then compute the shared
+secret key. The recrypt endpoint takes 3 inputs, encryption algorithm,
+decryption algorithm, then the content. The algorithm contains
+key ID, encryption algorithm name, and cipher parameters.
+
+| API endpoint   | Description                                |
+|----------------|--------------------------------------------|
+| POST /exchange | Create shared secret key                   |
+| POST /recrypt  | Decrypt then encrypt the requested content |
+
+[^1]: Apparently, recrypt is already a used term as we are using.
+      I thought I've made it... 

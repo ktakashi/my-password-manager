@@ -24,8 +24,6 @@ paths:
   /recrypt:
     post:
       summary: Decrypt then Encrypt request
-      parameters:
-        - $ref: "#/components/parameters/Pseudonym"
       requestBody:
         description: Recrypt request
         content:
@@ -54,6 +52,8 @@ components:
         keyLength:
           type:
             - integer
+          examples: 
+            - 32
     KeyExchangeResponse:
       type:
         - object
@@ -62,28 +62,103 @@ components:
         - publicKey
       properties:
         keyId:
-          type:
-            - string
+          $ref: "#/components/schemas/KeyId"
         publicKey:
           $ref: "#/components/schemas/PublicKey"
     RecryptRequest:
       type:
         - object
       properties:
-        decryptionKeyId:
-          $ref: "#/components/schemas/KeyId"
-        encryptionKeyId:
-          $ref: "#/components/schemas/KeyId"
+        decryptionAlgorithm:
+          $ref: "#/components/schemas/EncryptionAlgorithm"
+        encryptionAlgorithm:
+          $ref: "#/components/schemas/EncryptionAlgorithm"
         content:
           $ref: "#/components/schemas/EncryptedContent"
+    EncryptionAlgorithm:
+      type:
+        - object
+      required:
+        - keyId
+        - encryptionScheme
+      properties:
+        keyId:
+          $ref: "#/components/schemas/KeyId"
+        encryptionScheme:
+          $ref: "#/components/schemas/EncryptionScheme"
+        parameter:
+          $ref: "#/components/schemas/CipherParameter"
+    CipherParameter:
+      type:
+        - object
+      properties:
+        name:
+          $ref: "#/components/schemas/EncryptionMode"
+        value:
+          oneOf:
+            - $ref: "#/components/schemas/CBCModeParameter"
+            - $ref: "#/components/schemas/CTRModeParameter"
+            - $ref: "#/components/schemas/GCMModeParameter"
+    CBCModeParameter:
+      allOf:
+        - $ref: "#/components/schemas/IVParameter"
+    CTRModeParameter:
+      allOf:
+        - $ref: "#/components/schemas/IVParameter"
+        - $ref: "#/components/schemas/CtrParameter"
+    GCMModeParameter:
+      allOf:
+        - $ref: "#/components/schemas/IVParameter"
+        - $ref: "#/components/schemas/AadParameter"
+    IVParameter:
+      type:
+        - object
+      required:
+        - iv
+      properties:
+        iv:
+          $ref: "#/components/schemas/BinaryValue"
+    CtrParameter:
+      type:
+        - object
+      required:
+        - mode
+      properties:
+        mode:
+          $ref: "#/components/schemas/CounterMode"
+    AadParameter:
+      type:
+        - object
+      properties:
+        aad:
+          $ref: "#/components/schemas/BinaryValue"
     PublicKey:
-      type:
-        - string
-      contentEncoding: bas64
+      $ref: "#/components/schemas/BinaryValue"
     EncryptedContent:
+      $ref: "#/components/schemas/BinaryValue"
+    EncryptionScheme:
       type:
         - string
-      contentEncoding: bas64
+      enum:
+        - AES
+    EncryptionMode:
+      type:
+        - string
+      enum:
+        - ECB
+        - CBC
+        - CTR
+        - GCM
+    CounterMode:
+      type:
+        - string
+      enum:
+        - big
+        - little
     KeyId:
       type:
         - string
+    BinaryValue:
+      type:
+        - string
+      contentEncoding: base64

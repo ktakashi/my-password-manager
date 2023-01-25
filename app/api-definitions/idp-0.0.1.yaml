@@ -1,0 +1,10 @@
+openapi: 3.1.0
+info:
+  title: Identity Provider - API
+  version: 0.0.1
+  description: |-
+    Identify Provider - API
+paths:
+  /authenticate:
+    post:
+      summary: Authenticate a user

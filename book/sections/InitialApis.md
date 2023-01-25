@@ -53,5 +53,49 @@ key ID, encryption algorithm name, and cipher parameters.
 | POST /exchange | Create shared secret key                   |
 | POST /recrypt  | Decrypt then encrypt the requested content |
 
+For the entire API definition,
+see [KMS version 0.0.1 OAS](../../app/api-definitions/kms-0.0.1.yaml).
+
+
 [^1]: Apparently, recrypt is already a used term as we are using.
       I thought I've made it... 
+
+We have one more component which we need to decide its API. And that
+is [IdP](./glossary.md#idp). [IdP](./glossary.md#idp) needs to provide
+an authentication method. There are variety of authentication methods,
+however, at this moment we choose the simple one, password authentication.
+Password authentication requires a user ID and its password. So, the
+API should take at least 2 arguments. Now, we want to achieve 
+Zero-Knowledge Encryption, which means the [IdP](./glossary.md#idp)
+must not take plain password. I'm not entirely sure if Zero-Knowledge
+Encryption also means Zero-Knowledge for the authentication. But it'd
+be more interesting if the wall is higher, so let's do it like that.
+
+Not sending password but authenticating via password sounds very
+conflicting. We need to make the raw password something completely
+random, so that nobody can guess what the original value is. If I
+write the definition like this, it seems I can use a digest. Since
+clients of our application requires cryptographic operations, let's
+digest the password at the client side, then send it to 
+[IdP](./glossary.md#idp). If we simply digest the password, there
+might be the same value, say a lot of users want to use `password123`
+as their password, this might be a very easy to break through with
+rainbow table. So we need salt to make the result different. How
+about using the user ID as the salt. So the password we send will
+be generated like this.
+
+```
+Digest(userID || password)
+```
+
+[IdP](./glossary.md#idp) doesn't know the above formula, this needs
+to be done client side. And [IdP](./glossary.md#idp) simply checks
+the provided user ID and password. Considering this, the API of
+[IdP](./glossary.md#idp) should look like this:
+
+| API endpoint       | Description                         |
+|--------------------|-------------------------------------|
+| POST /authenticate | Authenticate the user with password |
+
+For the entire API definition,
+see [IdP version 0.0.1 OAS](../../app/api-definitions/idp-0.0.1.yaml).

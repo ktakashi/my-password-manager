@@ -10,5 +10,6 @@ Table of contents
 1. [Introduction](./sections/Introduction.md)
 2. [Initial Components](./sections/InitialComponent.md)
 3. [Initial Sequence](./sections/InitialSequence.md)
+4. [Initial APIs](./sections/InitialApis.md)
 - [Glossary](./sections/glossary.md)
 

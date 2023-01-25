@@ -78,11 +78,11 @@ write the definition like this, it seems I can use a digest. Since
 clients of our application requires cryptographic operations, let's
 digest the password at the client side, then send it to 
 [IdP](./glossary.md#idp). If we simply digest the password, there
-might be the same value, say a lot of users want to use `password123`
-as their password, this might be a very easy to break through with
-rainbow table. So we need salt to make the result different. How
-about using the user ID as the salt. So the password we send will
-be generated like this.
+might be the same value, for example `password` is the most commonly
+used password in 2022 unfortunately[^2], this might be a very easy to 
+break through with rainbow table. So we need salt to make the 
+result different. How about using the user ID as the salt. So
+the password we send will be generated like this.
 
 ```
 Digest(userID || password)
@@ -99,3 +99,5 @@ the provided user ID and password. Considering this, the API of
 
 For the entire API definition,
 see [IdP version 0.0.1 OAS](../../app/api-definitions/idp-0.0.1.yaml).
+
+[^2]: https://www.cnbc.com/2022/11/23/most-common-passwords-of-2022-make-sure-yours-isnt-on-the-list.html

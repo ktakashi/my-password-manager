@@ -1,0 +1,39 @@
+openapi: 3.1.0
+info:
+  title: Identity Provider - API
+  version: 0.0.1
+  description: |-
+    Identify Provider - API
+paths:
+  /passwords/authenticate:
+    post:
+      summary: Authenticate a user
+      requestBody:
+        content:
+          application/json:
+            $ref: '#/components/schemas/AuthenticationRequest'
+      responses:
+        200:
+          content:
+            application:json:
+              $ref: '#/components/schemas/AuthenticationResponse'
+components:
+  schemas:
+    AuthenticationRequest:
+      type:
+        - object
+      properties:
+        userId:
+          type:
+            - string
+        password:
+          type:
+            - string
+    AuthenticationResponse:
+      type:
+        - object
+      properties:
+        pseudonym:
+          description: temporary alias of the user Id
+          type:
+            - string

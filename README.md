@@ -15,7 +15,7 @@ pay for their fee (at this moment, I'm only using free tiers.).
 Project Structure
 -----------------
 
-The project consists with 2 parts, [`book`](./book) and [`app`](./app) 
+The project consists with 2 parts, [`book`](./book) and [`app`](./apps) 
 directories.
 
 The `book` directory will contain the passage of what I will have done. 

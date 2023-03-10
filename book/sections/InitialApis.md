@@ -24,7 +24,7 @@ can be more or less RESTish APIs. So, it may look like this:
 `fields` to retrieve only known fields, such as `id`.
 
 For the entire API definition, 
-see [SSS version 0.0.1 OAS](../../app/api-definitions/sss-0.0.1.yaml).
+see [SSS version 0.0.1 OAS](../../apps/api-definitions/sss-0.0.1.yaml).
 
 Now, we put `{pseudonym}` instead of `{user-id}`. If we put `{user-id}`,
 then the value might be internal ID or a value something you can indentify
@@ -54,7 +54,7 @@ key ID, encryption algorithm name, and cipher parameters.
 | POST /recrypt  | Decrypt then encrypt the requested content |
 
 For the entire API definition,
-see [KMS version 0.0.1 OAS](../../app/api-definitions/kms-0.0.1.yaml).
+see [KMS version 0.0.1 OAS](../../apps/api-definitions/kms-0.0.1.yaml).
 
 
 [^1]: Apparently, recrypt is already a used term as we are using.
@@ -98,6 +98,6 @@ the provided user ID and password. Considering this, the API of
 | POST /authenticate | Authenticate the user with password |
 
 For the entire API definition,
-see [IdP version 0.0.1 OAS](../../app/api-definitions/idp-0.0.1.yaml).
+see [IdP version 0.0.1 OAS](../../apps/api-definitions/idp-0.0.1.yaml).
 
 [^2]: https://www.cnbc.com/2022/11/23/most-common-passwords-of-2022-make-sure-yours-isnt-on-the-list.html

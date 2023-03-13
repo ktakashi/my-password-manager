@@ -18,4 +18,5 @@ interface PasswordRepository: CrudRepository<Password, Long>
 @Repository
 interface PseudonymRepository: CrudRepository<Pseudonym, Long> {
     fun findByPseudonym(pseudonym: UUID): Pseudonym
+    fun findByUser(user: User): Pseudonym?
 }

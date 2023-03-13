@@ -3,6 +3,7 @@ package io.mpm.idp.services
 import io.mpm.idp.entiries.Password
 import io.mpm.idp.entiries.PasswordHistory
 import io.mpm.idp.entiries.Pseudonym
+import io.mpm.idp.exceptions.InvalidCredentialException
 import io.mpm.idp.repositories.PasswordRepository
 import io.mpm.idp.repositories.PseudonymRepository
 import io.mpm.idp.repositories.UserRepository
@@ -41,14 +42,13 @@ class UserService(private val userRepository: UserRepository,
 
     fun authenticate(username: String, password: String) = userRepository.findByUserId(username)?.let { user ->
         if (passwordEncoder.matches(password, user.password.currentPassword)) {
-            // returning pseudonym
-            Pseudonym(user, UUID.randomUUID()).also { pseudonym ->
+            pseudonymRepository.findByUser(user) ?: Pseudonym(user, UUID.randomUUID()).also { pseudonym ->
                 pseudonymRepository.save(pseudonym)
             }
         } else {
-            throw UsernameNotFoundException("user not found")
+            throw InvalidCredentialException()
         }
-    }?: throw UsernameNotFoundException("user not found")
+    }?: throw InvalidCredentialException()
 
     @Transactional
     fun create(username: String, password: String): io.mpm.idp.entiries.User =

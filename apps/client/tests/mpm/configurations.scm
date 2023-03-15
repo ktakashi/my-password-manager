@@ -13,8 +13,8 @@
 		 #(("name" . "registration")
 		   ("path" . "/register")))))))
 
-(test-assert (configuration? (build-configuration config-json)))
-(let ((config (build-configuration config-json)))
+(test-assert (configuration? (json->configuration config-json)))
+(let ((config (json->configuration config-json)))
   (test-assert (service? (configuration-idp config)))
   (let ((uri (service-base-uri (configuration-idp config))))
     (test-assert (uri? uri))

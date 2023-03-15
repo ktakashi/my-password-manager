@@ -8,12 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 
 @RestController
 class RegisterController(private val userService: UserService) {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    fun authenticate(@RequestBody registrationRequest: RegistrationRequest): Mono<Void> = Mono.fromRunnable {
+    fun authenticate(@RequestBody registrationRequest: RegistrationRequest): Mono<Void> = Mono.fromRunnable<Void?> {
         userService.create(registrationRequest.userId, registrationRequest.password)
-    }
+    }.publishOn(Schedulers.boundedElastic())
 }

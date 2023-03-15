@@ -1,0 +1,14 @@
+idp:
+  base-uri: http://localhost:8080
+  endpoints:
+    - name: authentication
+      path: /authenticate
+    - name: registration
+      path: /registrate
+connection:
+  timeouts:
+    read: 1000ms
+    connection: 500ms
+    connection-request: 500ms
+    dns: 200ms
+  time-to-live: 10s

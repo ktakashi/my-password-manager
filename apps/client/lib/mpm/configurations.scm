@@ -4,10 +4,14 @@
 	    configuration? make-configuration
 	    configuration-idp configuration-connection
 
+	    configuration-search-service
+
 	    (rename (service <service>))
 	    service? make-service
 	    service-base-uri service-endpoints
 	    service-timeouts service-max-connection
+
+	    service-search-endpoint
 
 	    (rename (connection <connection>))
 	    connection-timeouts connection-max-connection-per-route
@@ -32,12 +36,21 @@
   (fields idp				;; service
 	  connection))
 
+(define (configuration-search-service config service)
+  (case service
+    ((idp) (configuration-idp config))
+    (else #f)))
+
 ;; Service
 (define-record-type service
   (fields base-uri
 	  timeouts
 	  max-connection
 	  endpoints))			;; ((name path) ...)
+
+(define (service-search-endpoint service name)
+  (cond ((assq name (service-endpoints service)) => cdr)
+	(else #f)))
 
 (define-record-type timeouts
   (fields read
@@ -54,6 +67,7 @@
   (let ((name (name-pointer obj))
 	(path (path-pointer obj)))
     (cons (string->symbol name) path)))
+
 (define (timeout->duration s)
   (define (->duration v u)
     (let ((n (string->number v)))

@@ -4,11 +4,11 @@ idp:
     - name: authentication
       path: /authenticate
     - name: registration
-      path: /registrate
+      path: /register
 connection:
   timeouts:
     read: 1000ms
     connection: 500ms
     connection-request: 500ms
-    dns: 200ms
+    # dns: 200ms
   time-to-live: 10s

@@ -10,10 +10,12 @@
 	    (rename (registration-request <registration-request>))
 	    registration-request? make-registration-request
 
-	    (rename (credential-holder-user-id authentication-request-user-id)
-		    (credential-holder-password authentication-request-password)
-		    (credential-holder-user-id registration-request-user-id)
-		    (credential-holder-password registration-request-password))
+	    (rename (credential-request-user-id authentication-request-user-id)
+		    (credential-request-password authentication-request-password)
+		    (credential-request-user-id registration-request-user-id)
+		    (credential-request-password registration-request-password))
+
+	    credential-request->json
 	    authentication-request->json
 	    json->authentication-response
 	    registration-request->json
@@ -28,28 +30,30 @@
     (import (rnrs)
 	    (srfi :19 time)
 	    (text json object-builder))
-(define-record-type credential-holder
+(define-record-type credential-request
   (fields user-id password))
 ;; request and response
 (define-record-type authentication-request
-  (parent credential-holder))
+  (parent credential-request))
 (define-record-type authentication-response
   (fields pseudonym))
 (define-record-type registration-request
-  (parent credential-holder))
+  (parent credential-request))
 
 (define-record-type error-response
   (fields type timestamp))
 
-(define credential-holder-serializer
+(define credential-request-serializer
   (json-object-serializer
-   (("userId" credential-holder-user-id)
-    ("password" credential-holder-password))))
+   (("userId" credential-request-user-id)
+    ("password" credential-request-password))))
 
+(define (credential-request->json cr)
+  (object->json cr credential-request-serializer))
 (define (authentication-request->json ar)
-  (object->json ar credential-holder-serializer))
+  (object->json ar credential-request-serializer))
 (define (registration-request->json rr)
-  (object->json rr credential-holder-serializer))
+  (object->json rr credential-request-serializer))
 
 
 (define authentication-response-builder

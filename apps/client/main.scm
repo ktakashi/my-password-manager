@@ -1,8 +1,12 @@
 (import (rnrs)
 	(mpm context)
 	(mpm configurations)
+	(mpm idp apis)
 	(text yaml)
-	(getopt))
+	(util concurrent)
+	(getopt)
+	(srfi :197)
+	(pp))
 
 (define (usage file)
   (print file " -c $config")
@@ -12,5 +16,11 @@
   (with-args args
       ((config  (#\c "config") #t (usage (car args)))
        . ignore)
-    (let ((v (car (call-with-input-file config yaml-read))))
-      (configuration->execution-context (json->configuration v)))))
+    (let* ((v (car (call-with-input-file config yaml-read)))
+	   (ctx (configuration->execution-context (json->configuration v))))
+      (pp (chain (register ctx "ktakashi@ymail.com" "TestPassword1234!")
+		 (future-flatmap
+		  (lambda (registred?)
+		    (authenticate ctx "ktakashi@ymail.com" "TestPassword1234!"))
+		  _)
+		 (future-get _))))))

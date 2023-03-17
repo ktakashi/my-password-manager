@@ -53,4 +53,6 @@ class UserService(private val userRepository: UserRepository,
     @Transactional
     fun create(username: String, password: String): io.mpm.idp.entiries.User =
             userRepository.save(io.mpm.idp.entiries.User(username, passwordRepository.save(Password(passwordEncoder.encode(password)))))
+
+    fun findByUsername(username: String): io.mpm.idp.entiries.User? = userRepository.findByUserId(username)
 }

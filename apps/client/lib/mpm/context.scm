@@ -40,7 +40,7 @@
 	  (read-timeout (duration->millis (timeouts-read timeouts)))
 	  (dns-timeout (duration->millis (timeouts-dns timeouts)))
 	  (max-connection-per-route
-	   (or (connection-max-connection-per-route connection) 10))
+	   (connection-max-connection-per-route connection))
 	  (time-to-live
 	   (duration->second (connection-time-to-live connection))))))
     (make-execution-context

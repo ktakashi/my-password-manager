@@ -28,7 +28,7 @@ class ApplicationTest  {
                 .expectBody().isEmpty
 
         val pseudonym0 = objectMapper.readValue(
-                webClient.post().uri("/authenticate")
+                webClient.post().uri("/authenticate/password")
                         .body(BodyInserters.fromValue(AuthenticationRequest("ktakashi@ymail.com", "password")))
                         .exchange()
                         .expectStatus().is2xxSuccessful
@@ -38,7 +38,7 @@ class ApplicationTest  {
                         .responseBody, AuthenticationResponse::class.java)
                 .pseudonym
 
-        webClient.post().uri("/authenticate")
+        webClient.post().uri("/authenticate/password")
                 .body(BodyInserters.fromValue(AuthenticationRequest("ktakashi@ymail.com", "invalid password")))
                 .exchange()
                 .expectStatus().is4xxClientError
@@ -47,7 +47,7 @@ class ApplicationTest  {
                 .jsonPath("$.timestamp").value<String> { v -> OffsetDateTime.parse(v) }
 
         val pseudonym1 = objectMapper.readValue(
-                webClient.post().uri("/authenticate")
+                webClient.post().uri("/authenticate/password")
                         .body(BodyInserters.fromValue(AuthenticationRequest("ktakashi@ymail.com", "password")))
                         .exchange()
                         .expectStatus().is2xxSuccessful

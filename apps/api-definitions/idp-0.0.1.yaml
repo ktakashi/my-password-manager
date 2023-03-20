@@ -5,9 +5,9 @@ info:
   description: |-
     Identify Provider - API
 paths:
-  /passwords/authenticate:
+  /authenticate/password:
     post:
-      summary: Authenticate a user
+      summary: Authenticate a user by the password
       requestBody:
         content:
           application/json:
@@ -17,23 +17,49 @@ paths:
           content:
             application:json:
               $ref: '#/components/schemas/AuthenticationResponse'
+  /register:
+    post:
+      summary: User registration
+    requestBody:
+      content:
+        application/json:
+          $ref: '#/component/schemas/RegistrationRequest'
+    responses:
+      201:
+        headers:
+          Location:
+            schema:
+              type: string
+      400:
+        content:
+          application/json:
+            $ref: '#/component/schemas/ErrorResponse'
 components:
   schemas:
-    AuthenticationRequest:
-      type:
-        - object
+    CredentialRequest:
+      type: object
       properties:
         userId:
-          type:
-            - string
+          type: string
         password:
-          type:
-            - string
+          type: string
+    AuthenticationRequest:
+      allOf:
+        - $ref: '#/components/schemas/CredentialRequest'
     AuthenticationResponse:
-      type:
-        - object
+      type: object
       properties:
         pseudonym:
           description: temporary alias of the user Id
-          type:
-            - string
+          type: string
+    RegistrationRequest:
+      allOf:
+        - $ref: '#/components/schemas/CredentialRequest'
+    ErrorResponse:
+      type: object
+      properties:
+        type:
+          type: string
+        timestamp:
+          type: string
+          format: datetime

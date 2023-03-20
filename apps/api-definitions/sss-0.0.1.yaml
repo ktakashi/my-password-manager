@@ -125,45 +125,35 @@ components:
               summary: Any error example
   schemas:
     ContentList:
-      type:
-        - array
+      type: array
       items:
         $ref: '#/components/schemas/Content'
     ContentRequest:
-      type:
-        - object
+      type: object
       required:
         - keyId
         - content
       properties:
         keyId:
-          type:
-            - string
+          type: string
           description: Client encryption key ID provided by KMS
         content:
           $ref: '#/components/schemas/Content'
     Content:
       description: Encrypted content
-      type:
-       - string
+      type: string
       contentEncoding: base64
     ContentId:
-      type:
-        - string
+      type: string
     Error:
-      type:
-        - object
+      type: object
       description: RFC 7807 error object
       properties:
         type:
-          type:
-            - string
+          type: string
         title:
-          type:
-            - string
+          type: string
         status:
-          type:
-            - integer
+          type: integer
         detail:
-          type:
-            - string
+          type: string

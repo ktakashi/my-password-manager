@@ -93,9 +93,9 @@ to be done client side. And [IdP](./glossary.md#idp) simply checks
 the provided user ID and password. Considering this, the API of
 [IdP](./glossary.md#idp) should look like this:
 
-| API endpoint       | Description                         |
-|--------------------|-------------------------------------|
-| POST /authenticate | Authenticate the user with password |
+| API endpoint                | Description                         |
+|-----------------------------|-------------------------------------|
+| POST /authenticate/password | Authenticate the user with password |
 
 For the entire API definition,
 see [IdP version 0.0.1 OAS](../../apps/api-definitions/idp-0.0.1.yaml).

@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 class AuthenticateController(private val userService: UserService) {
-    @PostMapping("/authenticate")
+    @PostMapping("/authenticate/password")
     fun authenticate(@RequestBody authenticateRequest: AuthenticationRequest): Mono<AuthenticationResponse> = Mono.fromCallable {
         AuthenticationResponse(userService.authenticate(authenticateRequest.userId, authenticateRequest.password).pseudonym)
     }

@@ -41,8 +41,7 @@ paths:
 components:
   schemas:
     KeyExchangeRequest:
-      type:
-        - object
+      type: object
       required:
         - publicKey
         - keyLength
@@ -50,13 +49,11 @@ components:
         publicKey:
           $ref: "#/components/schemas/PublicKey"
         keyLength:
-          type:
-            - integer
+          type: integer
           examples: 
             - 32
     KeyExchangeResponse:
-      type:
-        - object
+      type: object
       required:
         - keyId
         - publicKey
@@ -66,8 +63,7 @@ components:
         publicKey:
           $ref: "#/components/schemas/PublicKey"
     RecryptRequest:
-      type:
-        - object
+      type: object
       properties:
         decryptionAlgorithm:
           $ref: "#/components/schemas/EncryptionAlgorithm"
@@ -76,8 +72,7 @@ components:
         content:
           $ref: "#/components/schemas/EncryptedContent"
     EncryptionAlgorithm:
-      type:
-        - object
+      type: object
       required:
         - keyId
         - encryptionScheme
@@ -89,8 +84,7 @@ components:
         parameter:
           $ref: "#/components/schemas/CipherParameter"
     CipherParameter:
-      type:
-        - object
+      type: object
       properties:
         name:
           $ref: "#/components/schemas/EncryptionMode"
@@ -111,24 +105,21 @@ components:
         - $ref: "#/components/schemas/IVParameter"
         - $ref: "#/components/schemas/AadParameter"
     IVParameter:
-      type:
-        - object
+      type: object
       required:
         - iv
       properties:
         iv:
           $ref: "#/components/schemas/BinaryValue"
     CtrParameter:
-      type:
-        - object
+      type: object
       required:
         - mode
       properties:
         mode:
           $ref: "#/components/schemas/CounterMode"
     AadParameter:
-      type:
-        - object
+      type: object
       properties:
         aad:
           $ref: "#/components/schemas/BinaryValue"
@@ -137,28 +128,23 @@ components:
     EncryptedContent:
       $ref: "#/components/schemas/BinaryValue"
     EncryptionScheme:
-      type:
-        - string
+      type: string
       enum:
         - AES
     EncryptionMode:
-      type:
-        - string
+      type: string
       enum:
         - ECB
         - CBC
         - CTR
         - GCM
     CounterMode:
-      type:
-        - string
+      type: string
       enum:
         - big
         - little
     KeyId:
-      type:
-        - string
+      type: string
     BinaryValue:
-      type:
-        - string
+      type: string
       contentEncoding: base64

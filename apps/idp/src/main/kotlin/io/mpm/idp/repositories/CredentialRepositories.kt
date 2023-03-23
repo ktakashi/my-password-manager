@@ -1,8 +1,8 @@
 package io.mpm.idp.repositories
 
-import io.mpm.idp.entiries.Password
-import io.mpm.idp.entiries.Pseudonym
-import io.mpm.idp.entiries.User
+import io.mpm.idp.entities.Password
+import io.mpm.idp.entities.Pseudonym
+import io.mpm.idp.entities.User
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.UUID

@@ -1,7 +1,7 @@
 package io.mpm.idp.services
 
-import io.mpm.idp.entiries.Password
-import io.mpm.idp.entiries.User
+import io.mpm.idp.entities.Password
+import io.mpm.idp.entities.User
 import io.mpm.idp.repositories.PasswordRepository
 import io.mpm.idp.repositories.PseudonymRepository
 import io.mpm.idp.repositories.UserRepository

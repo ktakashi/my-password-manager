@@ -1,8 +1,8 @@
 package io.mpm.idp.services
 
-import io.mpm.idp.entiries.Password
-import io.mpm.idp.entiries.PasswordHistory
-import io.mpm.idp.entiries.Pseudonym
+import io.mpm.idp.entities.Password
+import io.mpm.idp.entities.PasswordHistory
+import io.mpm.idp.entities.Pseudonym
 import io.mpm.idp.exceptions.InvalidCredentialException
 import io.mpm.idp.repositories.PasswordRepository
 import io.mpm.idp.repositories.PseudonymRepository
@@ -51,8 +51,8 @@ class UserService(private val userRepository: UserRepository,
     }?: throw InvalidCredentialException()
 
     @Transactional
-    fun create(username: String, password: String): io.mpm.idp.entiries.User =
-            userRepository.save(io.mpm.idp.entiries.User(username, passwordRepository.save(Password(passwordEncoder.encode(password)))))
+    fun create(username: String, password: String): io.mpm.idp.entities.User =
+            userRepository.save(io.mpm.idp.entities.User(username, passwordRepository.save(Password(passwordEncoder.encode(password)))))
 
-    fun findByUsername(username: String): io.mpm.idp.entiries.User? = userRepository.findByUserId(username)
+    fun findByUsername(username: String): io.mpm.idp.entities.User? = userRepository.findByUserId(username)
 }

@@ -1,4 +1,4 @@
-package io.mpm.idp.entiries
+package io.mpm.idp.entities
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

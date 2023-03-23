@@ -1,7 +1,7 @@
 package io.mpm.idp.repositories
 
-import io.mpm.idp.entiries.Password
-import io.mpm.idp.entiries.User
+import io.mpm.idp.entities.Password
+import io.mpm.idp.entities.User
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

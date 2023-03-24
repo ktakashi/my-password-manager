@@ -1,25 +1,19 @@
 package io.mpm.kms.repositories
 
-import io.mpm.kms.entities.ContentEncryptionKey
 import io.mpm.kms.entities.DisposedKey
 import io.mpm.kms.entities.Key
-import io.mpm.kms.entities.KeyEncryptionKey
-import io.mpm.kms.entities.MasterKey
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.NoRepositoryBean
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface DisposedKeyRepository: CrudRepository<DisposedKey, Long>
-
-@NoRepositoryBean
-interface KeyRepository<K: Key>: CrudRepository<K, Long>
-
-@Repository
-interface MasterKeyRepository: KeyRepository<MasterKey>
+interface DisposedKeyRepository: CrudRepository<DisposedKey, Long> {
+    fun findByKey(key: Key): DisposedKey?
+}
 
 @Repository
-interface KeyEncryptionKeyRepository: KeyRepository<KeyEncryptionKey>
-
-@Repository
-interface ContentEncryptionKeyRepository: KeyRepository<ContentEncryptionKey>
+interface KeyRepository: CrudRepository<Key, Long> {
+    @Query("select k from Key k left join DisposedKey dk on k = dk.key where k.id = :id and dk = null")
+    fun findByKeyId(@Param("id") id: Long): Key?
+}

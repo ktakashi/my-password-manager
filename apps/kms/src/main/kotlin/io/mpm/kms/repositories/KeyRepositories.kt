@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.util.UUID
 
 @Repository
 interface DisposedKeyRepository: CrudRepository<DisposedKey, Long> {
@@ -14,6 +15,6 @@ interface DisposedKeyRepository: CrudRepository<DisposedKey, Long> {
 
 @Repository
 interface KeyRepository: CrudRepository<Key, Long> {
-    @Query("select k from Key k left join DisposedKey dk on k = dk.key where k.id = :id and dk = null")
-    fun findByKeyId(@Param("id") id: Long): Key?
+    @Query("select k from Key k left join DisposedKey dk on k = dk.key where k.keyId = :id and dk = null")
+    fun findByKeyId(@Param("id") id: UUID): Key?
 }

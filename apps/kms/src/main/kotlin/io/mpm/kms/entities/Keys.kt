@@ -4,6 +4,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import java.util.UUID
 
 sealed interface KeyUsage {
     /**
@@ -39,18 +40,19 @@ enum class KeyUsages(override val bits: UInt): KeyUsage {
 }
 
 @Entity
-data class DisposedKey(@OneToOne val key: Key): BaseEntity()
+data class DisposedKey(@OneToOne(optional = false) val key: Key): BaseEntity()
 
 @Entity
 @Table(name = "keys")
-class Key(@Column(name = "key_value") var value: ByteArray?,
+class Key(@Column(unique = true) val keyId: UUID = UUID.randomUUID(),
+          @Column(name = "key_value") var value: ByteArray?,
           @Column(name = "processed_bytes") var processedBytes: Long,
           @OneToOne var encryptionKey: Key?,
           // Default content encryption
           private val usage: UInt = KeyUsages.CONTENT_ENCRYPTION.bits) : ModifiableEntity() {
     constructor(value: ByteArray? = null,
                 encryptionKey: Key? = null,
-                usage: KeyUsage = KeyUsages.CONTENT_ENCRYPTION): this(value, 0L, encryptionKey, usage.bits)
+                usage: KeyUsage = KeyUsages.CONTENT_ENCRYPTION): this(value = value, processedBytes = 0L, encryptionKey = encryptionKey, usage = usage.bits)
     val keyUsage: KeyUsage
         get() = KeyUsage.fromUsageBits(usage)
 }

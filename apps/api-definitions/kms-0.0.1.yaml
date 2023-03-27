@@ -124,6 +124,7 @@ components:
         aad:
           $ref: "#/components/schemas/BinaryValue"
     PublicKey:
+      description: Public key in SubjectPublicKeyInfo
       $ref: "#/components/schemas/BinaryValue"
     EncryptedContent:
       $ref: "#/components/schemas/BinaryValue"

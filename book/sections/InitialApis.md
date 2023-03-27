@@ -9,18 +9,21 @@ providing resource access. So, the application will provide
 pragmatic APIs to achieve our goals.
 
 Let's start with [SSS](./glossary.md#sss), which is the goal
-of our application. [SSS](./glossary.md#sss) will provide 2
-types of APIs, creation and retrieval. It seems these 2 APIs
-can be more or less RESTish APIs. So, it may look like this:
+of our application. [SSS](./glossary.md#sss) will provide 3
+types of APIs, session negotiation, creation and retrieval. 
+It seems these 3 APIs can be more or less RESTish APIs. So,
+it may look like this:
 
 | API endpoint                            | Description                                                   |
 |-----------------------------------------|---------------------------------------------------------------|
-| GET  /{pseudonym}/contents              | Retrieve all contents of the user associated to {pseudonym}   |
-| POST /{pseudonym}/contents              | Create a secure content of the user associated to {pseudonym} |
-| GET  /{pseudonym}/contents/{content-id} | Retrieve a content of ID {content-id}                         |
-| PUT  /{pseudonym}/contents/{content-id} | Update a content of ID {content-id}                           |
+| POST /{pseudonym}/session               | Start session                                                 |
+| DELETE /{pseudonym}/session             | End session                                                   |
+| GET  /{sessionId}/contents              | Retrieve all contents of the user associated to {pseudonym}   |
+| POST /{sessionId}/contents              | Create a secure content of the user associated to {pseudonym} |
+| GET  /{sessionId}/contents/{content-id} | Retrieve a content of ID {content-id}                         |
+| PUT  /{sessionId}/contents/{content-id} | Update a content of ID {content-id}                           |
 
-`GET /{pseudonym}/contents` accepts query parameter named 
+`GET /{sessionId}/contents` accepts query parameter named 
 `fields` to retrieve only known fields, such as `id`.
 
 For the entire API definition, 

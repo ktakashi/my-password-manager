@@ -25,8 +25,11 @@ Client ->>+ KMS: Request Transport Key with the public key
 KMS ->> KMS: Generate ephemeral key pair
 KMS ->> KMS: Calculate transport key
 KMS ->> KMS: Store the transport key
-KMS ->>- Client: Response the public key
+KMS ->>- Client: Response the public key with transport key ID
 Client ->> Client: Calculate transport key
+Client ->>+ SSS: Initiate session (Sending key ID)
+SSS ->> SSS: Generate session ID and associate the key ID
+SSS ->>- Client: Session ID
 Client ->> Client: Encrypt with master password
 Client ->> Client: Encrypt with transport key
 loop Storing secure contents

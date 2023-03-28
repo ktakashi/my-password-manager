@@ -29,8 +29,7 @@ private fun algorithm(key: Key): String = when (key) {
     is RSAKey -> "RSA"
     is DSAKey -> "DSA"
     is DHKey -> "DH"
-    is ECKey -> "EC"
-    is XECKey -> "ECDH"
+    is ECKey, is XECKey -> "ECDH"
     is EdECKey -> "EdDSA"
     else -> throw IllegalArgumentException("Unknown key type")
 }

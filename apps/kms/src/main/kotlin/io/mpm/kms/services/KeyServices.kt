@@ -3,8 +3,8 @@ package io.mpm.kms.services
 import io.mpm.kms.entities.KeyUsages
 import io.mpm.kms.entities.SecretKey
 import io.mpm.kms.repositories.SecretKeyRepository
+import org.bouncycastle.jcajce.spec.XDHParameterSpec
 import org.springframework.stereotype.Service
-import java.security.AlgorithmParameterGenerator
 import java.security.Key
 import java.security.KeyPair
 import java.security.KeyPairGenerator
@@ -16,37 +16,42 @@ import java.security.interfaces.EdECKey
 import java.security.interfaces.RSAKey
 import java.security.interfaces.XECKey
 import java.security.spec.AlgorithmParameterSpec
-import java.security.spec.DSAGenParameterSpec
-import java.security.spec.ECGenParameterSpec
+import java.security.spec.DSAParameterSpec
+import java.security.spec.ECParameterSpec
 import java.security.spec.EdDSAParameterSpec
+import java.security.spec.NamedParameterSpec
 import java.security.spec.RSAKeyGenParameterSpec
 import java.util.UUID
 import javax.crypto.KeyAgreement
 import javax.crypto.interfaces.DHKey
-import javax.crypto.spec.DHGenParameterSpec
+import javax.crypto.spec.DHParameterSpec
 
-private fun algorithm(key: Key): String = when (key) {
-    is RSAKey -> "RSA"
-    is DSAKey -> "DSA"
-    is DHKey -> "DH"
-    is ECKey, is XECKey -> "ECDH"
-    is EdECKey -> "EdDSA"
+private fun keyAgreementAlgorithm(key: Key): String = when (key) {
+    is RSAKey, is DSAKey -> throw IllegalArgumentException("Key agreement is not supported")
+    is DHKey -> "DiffieHellman"
+    is ECKey -> "ECDH"
+    is XECKey -> "XDH"
+    is EdECKey -> "EdDSA" // can we?
     else -> throw IllegalArgumentException("Unknown key type")
 }
 
-private fun getDefaultKeyPairParameter(algorithm: String): AlgorithmParameterSpec = AlgorithmParameterGenerator.getInstance(algorithm).let {
-    it.generateParameters().getParameterSpec(when (algorithm) {
-        "RSA" -> RSAKeyGenParameterSpec::class.java
-        "EC", "ECDH" -> ECGenParameterSpec::class.java
-        "DH"-> DHGenParameterSpec::class.java
-        "DSA" -> DSAGenParameterSpec::class.java
-        "EdDSA" -> EdDSAParameterSpec::class.java
-        else -> throw java.lang.IllegalArgumentException("Unknown key type")
+private fun getDefaultKeyPairParameter(publicKey: PublicKey): AlgorithmParameterSpec = when (publicKey) {
+    is RSAKey -> RSAKeyGenParameterSpec(2048, RSAKeyGenParameterSpec.F4)
+    is ECKey -> ECParameterSpec(publicKey.params.curve, publicKey.params.generator, publicKey.params.order, publicKey.params.cofactor)
+    is XECKey -> XDHParameterSpec(publicKey.params.let {
+        when (it) {
+            is NamedParameterSpec -> it.name
+            else -> "X25519"
+        }
     })
+    is DHKey -> DHParameterSpec(publicKey.params.p, publicKey.params.g)
+    is DSAKey -> DSAParameterSpec(publicKey.params.p, publicKey.params.q, publicKey.params.g)
+    is EdECKey -> EdDSAParameterSpec(false)
+    else -> throw java.lang.IllegalArgumentException("Unknown key type")
 }
 @Service
 class KeyAgreementService {
-    fun calculateAgreement(publicKey: PublicKey, privateKey: PrivateKey, size: Int): ByteArray = KeyAgreement.getInstance(algorithm(publicKey)).let { ka ->
+    fun calculateAgreement(publicKey: PublicKey, privateKey: PrivateKey, size: Int): ByteArray = KeyAgreement.getInstance(keyAgreementAlgorithm(publicKey)).let { ka ->
         ka.init(privateKey)
         ka.doPhase(publicKey, true)
         ByteArray(size).apply {
@@ -59,9 +64,8 @@ data class AgreedKey(val keyId: UUID, val publicKey: PublicKey)
 @Service
 class KeyGenerator(private val keyAgreementService: KeyAgreementService,
                    private val secretKeyRepository: SecretKeyRepository) {
-    fun generateServerKeyPair(publicKey: PublicKey): KeyPair = generateServerKeyPair(algorithm(publicKey))
-    fun generateServerKeyPair(algorithm: String): KeyPair = KeyPairGenerator.getInstance(algorithm).let { kpg ->
-        kpg.initialize(getDefaultKeyPairParameter(algorithm))
+    fun generateServerKeyPair(publicKey: PublicKey): KeyPair = KeyPairGenerator.getInstance(publicKey.algorithm).let { kpg ->
+        kpg.initialize(getDefaultKeyPairParameter(publicKey))
         kpg.generateKeyPair()
     }
 

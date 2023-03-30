@@ -5,14 +5,14 @@ import io.mpm.kms.repositories.SecretKeyRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.capture
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import java.security.GeneralSecurityException
+import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.Security
 import java.util.UUID
@@ -31,10 +31,27 @@ class KeyGeneratorTest {
     @ParameterizedTest
     @CsvSource(value = [
         "EC",
-        "XDH"
-        // "DH"
+        "XDH",
+        "DH"
     ])
-    fun generateAgreedSecretKey(algorithm: String) {
+    fun `When using right algorithm, then got proper result`(algorithm: String) {
+        val (kp, id, generator) = setupKeyGenerator(algorithm)
+        val r = generator.generateAgreedSecretKey(publicKey = kp.public, 32)
+        assertThat(r.keyId).isEqualTo(id)
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = [
+        "RSA",
+        "DSA",
+        "EdDSA"
+    ])
+    fun `When using wrong algorithm, then got error`(algorithm: String) {
+        val (kp, _, generator) = setupKeyGenerator(algorithm)
+        assertThrows<IllegalArgumentException> { generator.generateAgreedSecretKey(publicKey = kp.public, 32) }
+    }
+
+    private fun setupKeyGenerator(algorithm: String): Triple<KeyPair, UUID, KeyGenerator> {
         val kpg = KeyPairGenerator.getInstance(algorithm)
         val kp = kpg.generateKeyPair()
         println(kp.public.javaClass)
@@ -48,7 +65,7 @@ class KeyGeneratorTest {
             on { save(argumentCaptor.capture()) } doReturn entity
         }
         val generator = KeyGenerator(KeyAgreementService(), repository)
-        val r = generator.generateAgreedSecretKey(publicKey = kp.public, 32)
-        assertThat(r.keyId).isEqualTo(id)
+        return Triple(kp, id, generator)
     }
+
 }

@@ -18,7 +18,6 @@ import java.security.interfaces.XECKey
 import java.security.spec.AlgorithmParameterSpec
 import java.security.spec.DSAParameterSpec
 import java.security.spec.ECParameterSpec
-import java.security.spec.EdDSAParameterSpec
 import java.security.spec.NamedParameterSpec
 import java.security.spec.RSAKeyGenParameterSpec
 import java.util.UUID
@@ -27,11 +26,10 @@ import javax.crypto.interfaces.DHKey
 import javax.crypto.spec.DHParameterSpec
 
 private fun keyAgreementAlgorithm(key: Key): String = when (key) {
-    is RSAKey, is DSAKey -> throw IllegalArgumentException("Key agreement is not supported")
+    is RSAKey, is DSAKey, is EdECKey -> throw IllegalArgumentException("Key agreement is not supported")
     is DHKey -> "DiffieHellman"
     is ECKey -> "ECDH"
     is XECKey -> "XDH"
-    is EdECKey -> "EdDSA" // can we?
     else -> throw IllegalArgumentException("Unknown key type")
 }
 
@@ -46,7 +44,7 @@ private fun getDefaultKeyPairParameter(publicKey: PublicKey): AlgorithmParameter
     })
     is DHKey -> DHParameterSpec(publicKey.params.p, publicKey.params.g)
     is DSAKey -> DSAParameterSpec(publicKey.params.p, publicKey.params.q, publicKey.params.g)
-    is EdECKey -> EdDSAParameterSpec(false)
+    is EdECKey -> publicKey.params
     else -> throw java.lang.IllegalArgumentException("Unknown key type")
 }
 @Service
@@ -54,8 +52,13 @@ class KeyAgreementService {
     fun calculateAgreement(publicKey: PublicKey, privateKey: PrivateKey, size: Int): ByteArray = KeyAgreement.getInstance(keyAgreementAlgorithm(publicKey)).let { ka ->
         ka.init(privateKey)
         ka.doPhase(publicKey, true)
-        ByteArray(size).apply {
-            ka.generateSecret(this, 0)
+        ka.generateSecret().let {
+            if (it.size == size)
+                it
+            else
+                ByteArray(size).apply {
+                    System.arraycopy(it, 0, this, 0, size)
+                }
         }
     }
 }

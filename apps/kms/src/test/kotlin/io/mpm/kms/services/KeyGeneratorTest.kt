@@ -11,7 +11,6 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import java.security.GeneralSecurityException
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.Security

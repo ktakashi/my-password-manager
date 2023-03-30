@@ -3,7 +3,6 @@ package io.mpm.kms.services
 import io.mpm.kms.entities.KeyUsages
 import io.mpm.kms.entities.SecretKey
 import io.mpm.kms.repositories.SecretKeyRepository
-import org.bouncycastle.jcajce.spec.XDHParameterSpec
 import org.springframework.stereotype.Service
 import java.security.Key
 import java.security.KeyPair
@@ -17,8 +16,6 @@ import java.security.interfaces.RSAKey
 import java.security.interfaces.XECKey
 import java.security.spec.AlgorithmParameterSpec
 import java.security.spec.DSAParameterSpec
-import java.security.spec.ECParameterSpec
-import java.security.spec.NamedParameterSpec
 import java.security.spec.RSAKeyGenParameterSpec
 import java.util.UUID
 import javax.crypto.KeyAgreement
@@ -35,13 +32,8 @@ private fun keyAgreementAlgorithm(key: Key): String = when (key) {
 
 private fun getDefaultKeyPairParameter(publicKey: PublicKey): AlgorithmParameterSpec = when (publicKey) {
     is RSAKey -> RSAKeyGenParameterSpec(2048, RSAKeyGenParameterSpec.F4)
-    is ECKey -> ECParameterSpec(publicKey.params.curve, publicKey.params.generator, publicKey.params.order, publicKey.params.cofactor)
-    is XECKey -> XDHParameterSpec(publicKey.params.let {
-        when (it) {
-            is NamedParameterSpec -> it.name
-            else -> "X25519"
-        }
-    })
+    is ECKey -> publicKey.params
+    is XECKey -> publicKey.params
     is DHKey -> DHParameterSpec(publicKey.params.p, publicKey.params.g)
     is DSAKey -> DSAParameterSpec(publicKey.params.p, publicKey.params.q, publicKey.params.g)
     is EdECKey -> publicKey.params

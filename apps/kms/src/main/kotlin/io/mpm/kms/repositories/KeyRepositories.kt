@@ -1,6 +1,7 @@
 package io.mpm.kms.repositories
 
 import io.mpm.kms.entities.DisposedKey
+import io.mpm.kms.entities.MasterKey
 import io.mpm.kms.entities.SecretKey
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -17,4 +18,10 @@ interface DisposedKeyRepository: CrudRepository<DisposedKey, Long> {
 interface SecretKeyRepository: CrudRepository<SecretKey, Long> {
     @Query("select k from SecretKey k left join DisposedKey dk on k = dk.key where k.keyId = :id and dk = null")
     fun findByKeyId(@Param("id") id: UUID): SecretKey?
+}
+
+@Repository
+interface MasterKeyRepository: CrudRepository<MasterKey, Long> {
+    @Query("select k from MasterKey k left join DisposedKey dk on k.key = dk.key where dk = null")
+    fun findMasterKey(): MasterKey?
 }

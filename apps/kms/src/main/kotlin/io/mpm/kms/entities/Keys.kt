@@ -2,8 +2,11 @@ package io.mpm.kms.entities
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 import java.util.UUID
 
 sealed interface KeyUsage {
@@ -45,14 +48,23 @@ data class DisposedKey(@OneToOne(optional = false) val key: SecretKey): BaseEnti
 @Entity
 class SecretKey(@Column(unique = true) val keyId: UUID = UUID.randomUUID(),
                 @Column(name = "key_value") var value: ByteArray?,
-                @Column(name = "processed_bytes") var processedBytes: Long,
                 @OneToOne var encryptionKey: SecretKey?,
                 // Default content encryption
                 private val usage: UInt = KeyUsages.CONTENT_ENCRYPTION.bits) : ModifiableEntity() {
     constructor(value: ByteArray? = null,
                 encryptionKey: SecretKey? = null,
-                usage: KeyUsage = KeyUsages.CONTENT_ENCRYPTION): this(value = value, processedBytes = 0L, encryptionKey = encryptionKey, usage = usage.bits)
+                usage: KeyUsage = KeyUsages.CONTENT_ENCRYPTION)
+            : this(value = value, encryptionKey = encryptionKey, usage = usage.bits)
     val keyUsage: KeyUsage
         get() = KeyUsage.fromUsageBits(usage)
 }
 
+@Entity
+class MasterKey(@OneToOne(optional = false) val key: SecretKey,
+                @Column(unique = true) val specific: String) : BaseEntity()
+
+@Entity
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["key_id", "algorithm"])])
+class SecretKeyUsage(@JoinColumn(name = "key_id", nullable = false) @ManyToOne val key: SecretKey,
+                     @Column(nullable = false) val algorithm: String,
+                     @Column(name = "processed_bytes") var processedBytes: Long = 0L): ModifiableEntity()
